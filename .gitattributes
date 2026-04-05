@@ -1,0 +1,5 @@
+# Treat all .inc files as Assembly
+*.inc linguist-language=Assembly
+
+# Count Markdown normally (not as documentation)
+*.md linguist-documentation=false
