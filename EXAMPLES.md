@@ -44,36 +44,6 @@ XDATA_SECTION
     ;  db (2 | (((40 - 8) / 8) << 4))
 ```
 
-## Using the struct helpers
-
-```nasm
-%include "struct.inc"
-
-STRUCT MyStruct
-    FIELD field1, 4
-    FIELD field2, 8
-    FIELD field3, 1
-ENDSTRUCT
-; emits:
-;  %define MyStruct 0
-;  %define MyStruct_field1 0
-;  %define MyStruct_field2 4
-;  %define MyStruct_field3 12
-;  %define MyStruct_SIZE 16
-
-STRUCT MyAlignedStruct
-    FIELD field1, 4, 4
-    FIELD field2, 8, 8
-    FIELD field3, 1, 4
-ENDSTRUCT
-; emits:
-;  %define MyAlignedStruct 0
-;  %define MyAlignedStruct_field1 0
-;  %define MyAlignedStruct_field2 8
-;  %define MyAlignedStruct_field3 16
-;  %define MyAlignedStruct_SIZE 32
-```
-
 ## Using the visibility helpers
 
 ```nasm

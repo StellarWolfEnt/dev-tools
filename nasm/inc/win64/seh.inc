@@ -10,7 +10,7 @@
 ; as such the name of the xdata label is derived from the function name, so the function name must be unique within the module
 %macro PDATA 1-2
 
-    %ifdef __%1_PDATA_GUARD
+    %ifmacro __%1_PDATA_GUARD
         %error "PDATA: function '%1' already has pdata defined"
     %endif
 
@@ -39,7 +39,7 @@
 ; %7: frame register offset (in bytes) (required when frame register is specified, defaults to 0)
 %macro XDATA 3-7
 
-    %ifdef __%1_XDATA_GUARD
+    %ifmacro __%1_XDATA_GUARD
         %error "XDATA: function '%1' already has xdata defined"
     %endif
 
@@ -50,26 +50,30 @@
     %define frame_register 0
     %define frame_register_offset 0
 
-    %if %0 >= 4 && %4 != 0
-        %if %0 < 5
-            %error "XDATA: if size of prolog is specified, count of unwind codes must also be specified"
-        %endif
+    %if %0 >= 4
+        %if %4 != 0
+            %if %0 < 5
+                %error "XDATA: if size of prolog is specified, count of unwind codes must also be specified"
+            %endif
 
-        %define prolog_size %4
-        %define unwind_code_count %5
+            %define prolog_size %4
+            %define unwind_code_count %5
+        %endif
     %endif
 
-    %if %0 >= 6 && %6 != 0
-        %if %0 < 7
-            %error "XDATA: if frame register is specified, frame register offset must also be specified"
-        %endif
+    %if %0 >= 6
+        %if %6 != 0
+            %if %0 < 7
+                %error "XDATA: if frame register is specified, frame register offset must also be specified"
+            %endif
 
-        %if %7 != 0 && (%7 % 16) != 0
-            %error "XDATA: frame register offset must be a multiple of 16"
-        %endif
+            %if %7 != 0 && (%7 % 16) != 0
+                %error "XDATA: frame register offset must be a multiple of 16"
+            %endif
 
-        %define frame_register %6
-        %define frame_register_offset %7
+            %define frame_register %6
+            %define frame_register_offset %7
+        %endif
     %endif
 
     %if (version != 1)
@@ -105,8 +109,8 @@
         db unwind_code_count
         db (frame_register | ((frame_register_offset / 16) << 4))
 
-    %xassign p_count unwind_code_count
-    %xassign u_count 0
+    %xdefine p_count unwind_code_count
+    %xdefine u_count 0
 %endmacro
 
 ; %1: unwind code offset (in bytes)
@@ -118,7 +122,7 @@
 
     db %1
     db (0 | (%2 << 4))
-    %xassign u_count u_count + 1
+    %xdefine u_count u_count + 1
 %endmacro
 
 ; %1: unwind code offset (in bytes)
@@ -139,17 +143,17 @@
     %if(%2 <= 128)
         db %1
         db (2 | (((%2 - 8) / 8) << 4))
-        %xassign u_count u_count + 1
+        %xdefine u_count u_count + 1
     %elif (%2 <= 0x7FFF8)
         db %1
         db (1 | (0 << 4))
         dw %2 / 8
-        %xassign u_count u_count + 2
+        %xdefine u_count u_count + 2
     %else
         db %1
         db (1 | (1 << 4))
         dd %2
-        %xassign u_count u_count + 3
+        %xdefine u_count u_count + 3
     %endif
 %endmacro
 
@@ -157,7 +161,7 @@
 %macro UWOP_SET_FPREG 1
     db %1
     db (3 | (0 << 4))
-    %xassign u_count u_count + 1
+    %xdefine u_count u_count + 1
 %endmacro
 
 ; %1: unwind code offset (in bytes)
@@ -176,12 +180,12 @@
          db %1
          db (4 | (%2 << 4))
          dw (%3 / 8)
-        %xassign u_count u_count + 2
+        %xdefine u_count u_count + 2
     %else
         db %1
         db (5 | (%2 << 4))
         dd %3
-        %xassign u_count u_count + 3
+        %xdefine u_count u_count + 3
     %endif
 %endmacro
 
@@ -201,12 +205,12 @@
         db %1
         db (8 | (%2 << 4))
         dw (%3 / 16)
-        %xassign u_count u_count + 2
+        %xdefine u_count u_count + 2
     %else
         db %1
         db (9 | (%2 << 4))
         dd %3
-        %xassign u_count u_count + 3
+        %xdefine u_count u_count + 3
     %endif
 %endmacro
 
@@ -219,7 +223,7 @@
 
     db %1
     db (10 | (%2 << 4))
-    %xassign u_count u_count + 1
+    %xdefine u_count u_count + 1
 %endmacro
 
 ; %1: function name [optional, unused, this just helps with readability]

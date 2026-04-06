@@ -36,7 +36,6 @@ dev-tools/
       win64/
         seh.inc
       x-plat/
-        struct.inc
         visibility.inc
 ```
 
@@ -56,7 +55,6 @@ The `nasm` folder currently contains two kinds of include files:
 Current helper includes:
 
 - `inc/win64/seh.inc`: helpers for emitting Windows x64 unwind and exception metadata.
-- `inc/x-plat/struct.inc`: macros for defining simple struct layouts and offsets.
 - `inc/x-plat/visibility.inc`: macros for function visibility and common code section setup.
 
 Current import includes:

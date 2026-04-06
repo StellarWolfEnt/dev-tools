@@ -43,16 +43,13 @@
 %macro END 0-1
     %ifndef __CUR_FUNC
         %error "END: no function is currently being defined, please start a function with PUBLIC, INTERNAL, or PRIVATE before using END"
-    %endif
+    %endif 
 
-    %if %0 = 1
-        %define end_label %1
-    %else
-        %define end_label %{__CUR_FUNC}_End
-    %endif
 
+    %define __END_LABEL __CUR_FUNC %+ _End
+
+__END_LABEL:
     %undef __CUR_FUNC
-    end_label:
 %endmacro
 
 %endif ; !VISIBILITY_INC
